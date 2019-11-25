@@ -1,20 +1,45 @@
 package training.busboard;
 
-import com.google.gson.Gson;
 import org.glassfish.jersey.jackson.JacksonFeature;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Invocation;
-import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.util.Scanner;
 import java.util.stream.Stream;
 
 public class Main {
     public static void main(String args[]) {
         Client client = createClient();
-        Stream<Arrival> arrivals = getResource(client, "490008660N");
-        arrivals.forEach(Main::displayOneArrival);
+        String postcode = getPostcode();
+        Location postcodeCoordinates = getCoordinates(client, postcode);
+        System.out.println(postcodeCoordinates.latitude);
+        System.out.println(postcodeCoordinates.longitude);
+        //String stopCode = getStopCode();
+        //Stream<Arrival> arrivals = getFiveArrivals(client, stopCode); //490008660N
+        //arrivals.forEach(Main::displayOneArrival);
+    }
+
+    private static String getPostcode() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Please enter your postcode");
+        String postcode = scanner.nextLine();
+        return postcode;
+    }
+
+    private static Location getCoordinates(Client client, String postcode) {
+        String targetURL = "http://api.postcodes.io/postcodes/" + postcode;
+        Response coordinatesResponse = client.target(targetURL).request(MediaType.APPLICATION_JSON).get();
+        System.out.println(coordinatesResponse);
+        Location location = client.target(targetURL).request(MediaType.APPLICATION_JSON).get(PostcodeDetails.class).result;
+        return location;
+    }
+    private static String getStopCode() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Please enter stop code");
+        String stopCode = scanner.nextLine();
+        return stopCode;
     }
 
     private static Client createClient() {
@@ -22,27 +47,18 @@ public class Main {
         return client;
     }
 
-    private static Stream<Arrival> getResource(Client client, String naptanID) {
+    private static Stream<Arrival> getFiveArrivals(Client client, String naptanID) {
         String targetURL = "https://api.tfl.gov.uk/StopPoint/" + naptanID + "/Arrivals?app_key=c296999420f792c8d77672286948bd54&app_id=45d0999f";
         Stream<Arrival> arrivals = Stream.of(client.target(targetURL).request(MediaType.APPLICATION_JSON).get(Arrival[].class));
-        return arrivals;
-    }
-
-    private static void displayArrivals() {
-
+        return arrivals.sorted((x,y) -> x.expectedArrival.compareTo(y.expectedArrival)).limit(5);
     }
 
     private static void displayOneArrival(Arrival arrival) {
-        String lineId = arrival.lineId;
+        String lineName = arrival.lineName;
         String expectedArrival = arrival.expectedArrival;
         String destinationName = arrival.destinationName;
-        String direction = arrival.direction;
-        String $type = arrival.$type;
-        System.out.println("lineId: " + lineId);
-        System.out.println("expectedArrival: " + expectedArrival);
-        System.out.println("destinationName: " + destinationName);
-        System.out.println("direction: " + direction);
-        System.out.println("$type: " + $type);
+        System.out.println("Bus number " + lineName + " to " + destinationName + " expected at " + expectedArrival);
     }
+
 
 }	
