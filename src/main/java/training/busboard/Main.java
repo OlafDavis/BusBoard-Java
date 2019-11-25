@@ -15,7 +15,7 @@ public class Main {
         String postcode = getPostcode();
         Location postcodeCoordinates = getCoordinates(client, postcode);
         Stream<String> nearestTwoNaptans = getNearbyStopCodes(client, postcodeCoordinates);
-        nearestTwoNaptans.forEach(x -> System.out.println(x));
+        nearestTwoNaptans.forEach(System.out::println);
         //String stopCode = getStopCode();
         //Stream<Arrival> arrivals = getFiveArrivals(client, stopCode); //490008660N
         //arrivals.forEach(Main::displayOneArrival);
@@ -35,9 +35,13 @@ public class Main {
     }
 
     private static Stream<String> getNearbyStopCodes(Client client, Location location) {
-        String targetURL = "https://api.tfl.gov.uk/StopPoint/?stopTypes=bus&radius=10&lat=1.0&lon=0.1";
-        return Stream.of(client.target(targetURL).request(MediaType.APPLICATION_JSON).get(NearbyStopPoints.class).stopPoints)
-                .sorted((x,y) -> x.distance.compareTo(y.distance))
+        System.out.println(location.latitude);
+        System.out.println(location.longitude);
+        String targetURL = "https://api.tfl.gov.uk/StopPoint?stopTypes=NaptanPublicBusCoachTram&radius=1000&lat=" + location.latitude + "&lon=" + location.longitude;
+        //NaptanBusCoachStation,NaptanBusWayPoint,NaptanOnstreetBusCoachStopCluster,NaptanOnstreetBusCoachStopPair,NaptanPrivateBusCoachTram,NaptanPublicBusCoachTram
+        Stream<StopPointDetails> stringStream = Stream.of(client.target(targetURL).request(MediaType.APPLICATION_JSON)
+                .get(NearbyStopPoints.class).stopPoints);
+        return stringStream.sorted((x, y) -> x.distance.compareTo(y.distance))
                 .limit(2)
                 .map(x -> x.naptanId);
     }
@@ -59,6 +63,4 @@ public class Main {
         String destinationName = arrival.destinationName;
         System.out.println("Bus number " + lineName + " to " + destinationName + " expected at " + expectedArrival);
     }
-
-
-}	
+}
