@@ -14,8 +14,8 @@ public class Main {
         Client client = createClient();
         String postcode = getPostcode();
         Location postcodeCoordinates = getCoordinates(client, postcode);
-        System.out.println(postcodeCoordinates.latitude);
-        System.out.println(postcodeCoordinates.longitude);
+        Stream<String> nearestTwoNaptans = getNearbyStopCodes(client, postcodeCoordinates);
+        nearestTwoNaptans.forEach(x -> System.out.println(x));
         //String stopCode = getStopCode();
         //Stream<Arrival> arrivals = getFiveArrivals(client, stopCode); //490008660N
         //arrivals.forEach(Main::displayOneArrival);
@@ -30,16 +30,16 @@ public class Main {
 
     private static Location getCoordinates(Client client, String postcode) {
         String targetURL = "http://api.postcodes.io/postcodes/" + postcode;
-        Response coordinatesResponse = client.target(targetURL).request(MediaType.APPLICATION_JSON).get();
-        System.out.println(coordinatesResponse);
         Location location = client.target(targetURL).request(MediaType.APPLICATION_JSON).get(PostcodeDetails.class).result;
         return location;
     }
-    private static String getStopCode() {
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Please enter stop code");
-        String stopCode = scanner.nextLine();
-        return stopCode;
+
+    private static Stream<String> getNearbyStopCodes(Client client, Location location) {
+        String targetURL = "https://api.tfl.gov.uk/StopPoint/?stopTypes=bus&radius=10&lat=1.0&lon=0.1";
+        return Stream.of(client.target(targetURL).request(MediaType.APPLICATION_JSON).get(NearbyStopPoints.class).stopPoints)
+                .sorted((x,y) -> x.distance.compareTo(y.distance))
+                .limit(2)
+                .map(x -> x.naptanId);
     }
 
     private static Client createClient() {
