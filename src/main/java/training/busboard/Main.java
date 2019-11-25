@@ -14,11 +14,15 @@ public class Main {
         Client client = createClient();
         String postcode = getPostcode();
         Location postcodeCoordinates = getCoordinates(client, postcode);
-        Stream<String> nearestTwoNaptans = getNearbyStopCodes(client, postcodeCoordinates);
-        nearestTwoNaptans.forEach(System.out::println);
-        //String stopCode = getStopCode();
-        //Stream<Arrival> arrivals = getFiveArrivals(client, stopCode); //490008660N
-        //arrivals.forEach(Main::displayOneArrival);
+        StopPointDetails[] nearestTwoStops = getNearbyStops(client, postcodeCoordinates);
+        Stream.of(nearestTwoStops).forEach(x -> displayArrivalsFor(client, x));
+    }
+
+    private static void displayArrivalsFor(Client client, StopPointDetails stop) {
+        Stream<Arrival> arrivalStream = getFiveArrivals(client, stop.naptanId);
+        System.out.println("Arrivals for stop " + stop.commonName + ":");
+        arrivalStream.forEach(Main::displayOneArrival);
+        System.out.println("");
     }
 
     private static String getPostcode() {
@@ -34,16 +38,16 @@ public class Main {
         return location;
     }
 
-    private static Stream<String> getNearbyStopCodes(Client client, Location location) {
+    private static StopPointDetails[] getNearbyStops(Client client, Location location) {
         System.out.println(location.latitude);
         System.out.println(location.longitude);
         String targetURL = "https://api.tfl.gov.uk/StopPoint?stopTypes=NaptanPublicBusCoachTram&radius=1000&lat=" + location.latitude + "&lon=" + location.longitude;
         //NaptanBusCoachStation,NaptanBusWayPoint,NaptanOnstreetBusCoachStopCluster,NaptanOnstreetBusCoachStopPair,NaptanPrivateBusCoachTram,NaptanPublicBusCoachTram
-        Stream<StopPointDetails> stringStream = Stream.of(client.target(targetURL).request(MediaType.APPLICATION_JSON)
-                .get(NearbyStopPoints.class).stopPoints);
-        return stringStream.sorted((x, y) -> x.distance.compareTo(y.distance))
+        return Stream.of(client.target(targetURL).request(MediaType.APPLICATION_JSON)
+                .get(NearbyStopPoints.class).stopPoints)
+                .sorted((x, y) -> x.distance.compareTo(y.distance))
                 .limit(2)
-                .map(x -> x.naptanId);
+                .toArray(StopPointDetails[]::new);
     }
 
     private static Client createClient() {
