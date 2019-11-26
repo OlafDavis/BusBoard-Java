@@ -7,12 +7,14 @@
 
     <head>
         <title>Bus Information</title>
+        <meta http-equiv="refresh" content="30">
     </head>
     <body>
         <div layout:fragment="content" class="container body-content">
             <h2>Bus Information</h2>
             <div>
                 <p>You entered postcode <span th:text="${busInfo.postcode}"></span></p>
+                <p>Arrival information: <span style="white-space: pre-line;" th:text="${busInfo.boardString}"></span> </p>
             </div>
         </div>
     </body>
