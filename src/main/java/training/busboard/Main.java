@@ -19,6 +19,8 @@ public class Main {
         Client client = createClient();
         Location postcodeCoordinates = getCoordinates(client, postcode);
         StopPointDetails[] nearestTwoStops = getNearbyStops(client, postcodeCoordinates);
+        System.out.println(nearestTwoStops[0].naptanId);
+        System.out.println(nearestTwoStops[1].naptanId);
         return Stream.of(nearestTwoStops).map(x -> new StopDisplay(client,x));
     }
 
@@ -98,6 +100,15 @@ public class Main {
             default: direction = "";
         }
         return direction;
+    }
+
+    public static Boolean ValidatePostcode(String postcode) {
+        Client client = createClient();
+        String targetURL = "https://api.postcodes.io/postcodes/" + postcode + "/validate";
+        System.out.println(targetURL);
+        System.out.println(client.target(targetURL).request(MediaType.APPLICATION_JSON).get(PostcodeValidator.class).Validated());
+        System.out.println(client.target(targetURL).request(MediaType.APPLICATION_JSON).get(PostcodeValidator.class).result);
+        return client.target(targetURL).request(MediaType.APPLICATION_JSON).get(PostcodeValidator.class).Validated();
     }
 
 }
