@@ -15,11 +15,14 @@
             <div>
                 <p>You entered postcode <span th:text="${busInfo.getPostcode()}"></span></p>
 <!--                <p>Arrival information: <span style="white-space: pre-line;" th:text="${busInfo.boardString}"></span> </p>-->
-                <table>
-                    <tr th:each="stopDisplay: ${busInfo.getStopDisplays()}">
-                        <td th:text="${stopDisplay.getStopName()}" ></td>
-                    </tr>
-                </table>
+                <div>
+                    <div th:each="stopDisplay: ${busInfo.getStopDisplays()}">
+                        <div th:text="${stopDisplay.getStopName()}" ></div>
+                        <div th:each="arrival: ${stopDisplay.getArrivals()}">
+                            <div th:text="'Bus number ' + ${arrival.lineName} + ' to ' + ${arrival.destinationName} + ', expected at ' + ${arrival.expectedArrival}"></div>
+                        </div>
+                    </div>
+                </div>
 <!--                <p-->
 <!--                   th:text="${stopDisplay.getStopName()}" >-->
 <!--                </p>-->

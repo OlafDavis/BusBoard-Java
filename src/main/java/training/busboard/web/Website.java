@@ -19,7 +19,6 @@ public class Website {
 
     @RequestMapping("/busInfo")
     ModelAndView busInfo(@RequestParam("postcode") String postcode) {
-        System.out.println(Main.busBoard(postcode));
         return new ModelAndView("info", "busInfo", new BusInfo(postcode)) ;
     }
 

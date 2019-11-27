@@ -7,7 +7,7 @@ import java.util.stream.Stream;
 
 public class StopDisplay {
     private String stopName;
-    private Stream<Arrival> arrivals;
+    private Arrival[] arrivals;
 
     public StopDisplay(Client client, StopPointDetails stopPointDetails) {
         this.stopName = stopPointDetails.commonName;
@@ -16,5 +16,9 @@ public class StopDisplay {
 
     public String getStopName() {
         return stopName;
+    }
+
+    public Arrival[] getArrivals() {
+        return arrivals;
     }
 }

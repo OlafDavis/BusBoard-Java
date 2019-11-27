@@ -46,16 +46,16 @@ public class Main {
         return client;
     }
 
-    public static Stream<Arrival> getFiveArrivals(Client client, String naptanID) {
+    public static Arrival[] getFiveArrivals(Client client, String naptanID) {
         String targetURL = "https://api.tfl.gov.uk/StopPoint/" + naptanID + "/Arrivals?app_key=c296999420f792c8d77672286948bd54&app_id=45d0999f";
         Stream<Arrival> arrivals = Stream.of(client.target(targetURL).request(MediaType.APPLICATION_JSON).get(Arrival[].class));
-        return arrivals.sorted((x,y) -> x.expectedArrival.compareTo(y.expectedArrival)).limit(5);
+        return arrivals.sorted((x,y) -> x.expectedArrival.compareTo(y.expectedArrival)).limit(5).toArray(Arrival[]::new);
     }
 
-    private static String displayOneArrival(Arrival arrival) {
-        String lineName = arrival.lineName;
-        String expectedArrival = arrival.expectedArrival;
-        String destinationName = arrival.destinationName;
-        return "Bus number " + lineName + " to " + destinationName + " expected at " + expectedArrival;
-    }
+//    private static String displayOneArrival(Arrival arrival) {
+//        String lineName = arrival.lineName;
+//        String expectedArrival = arrival.expectedArrival;
+//        String destinationName = arrival.destinationName;
+//        return "Bus number " + lineName + " to " + destinationName + " expected at " + expectedArrival;
+//    }
 }
