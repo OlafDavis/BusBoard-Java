@@ -73,13 +73,15 @@ public class Main {
 //    }
     public static String makeProgressBar (Integer[] timesToStation) {
 //        Stream<Integer> busPositions = Stream.of(timesToStation).map(x -> 60 - x/30);
-//        String progressString = "___________________________________________________________\uD83D\uDE8F";
+//        String progressString = "____________________________________________________________\uD83D\uDE8F";
 //        busPositions.forEach((x) -> progressString = progressString + ;
-        String progressString = "\uD83D\uDE8F";
-        String seperator = "_";
+
+        String progressString = "";
+        String separator = "_";
         for (Integer t : timesToStation) {
-            progressString = "\uD83D\uDE8C" + StringUtils.repeat(seperator,t/30) + progressString;
+            progressString += StringUtils.repeat(separator,t/30-progressString.length()) + "\uD83D\uDE8C";
         }
+        progressString="\uD83E\uDDCD\uD83D\uDE8F"+ progressString;
         return progressString;
     }
 

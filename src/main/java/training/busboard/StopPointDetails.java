@@ -7,5 +7,6 @@ public class StopPointDetails {
     public String naptanId;
     public Double distance;
     public String commonName;
+    public AdditionalProperty[] additionalProperties;
     public String stopType;
 }

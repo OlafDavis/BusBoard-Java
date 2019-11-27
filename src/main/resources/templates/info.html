@@ -13,18 +13,19 @@
         <div layout:fragment="content" class="container body-content">
             <h2>Bus Information</h2>
             <div>
-                <p>Here are your nearest stops for postcode <span th:text="${busInfo.getPostcode()}"></span></p>
+                <p>Next arrivals near postcode <span th:text="${busInfo.getPostcode()}"></span>:</p>
                 <div>
                     <div th:each="stopDisplay: ${busInfo.getStopDisplays()}">
-                        <div th:text="${stopDisplay.getStopName()}" ></div>
+                        <b><div th:text="${stopDisplay.getStopName()
+                        + (stopDisplay.getTowards()!= null ? ' towards '+stopDisplay.getTowards(): '')
+                        + (stopDisplay.getCompassPoint()!= null ? ' (Direction: '+stopDisplay.getCompassPoint() + ')': '')
+                        }" ></div></b>
                         <div th:each="arrival: ${stopDisplay.getArrivals()}">
                             <div th:text="'Bus number ' + ${arrival.lineName} + ' to ' + ${arrival.destinationName} + ', expected at ' + ${arrival.formattedTime}"></div>
                         </div>
-                        <p />
+                        <br>
                         <div th:text="${stopDisplay.getProgressBar()}"></div>
-                        <p />
-                    </div>
-                    <div>
+                        <br>
                     </div>
                 </div>
             </div>
