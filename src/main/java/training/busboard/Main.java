@@ -11,20 +11,19 @@ import java.util.Scanner;
 import java.util.stream.Stream;
 
 public class Main {
-    public static String busBoard(String postcode) {
+    public static Stream<StopDisplay> busBoard(String postcode) {
         Client client = createClient();
         Location postcodeCoordinates = getCoordinates(client, postcode);
-        StopPointDetails[] nearestTwoStops = getNearbyStops(client, postcodeCoordinates); 
-        String boardString = Stream.of(nearestTwoStops).map(x -> displayArrivalsFor(client, x)).reduce("", (x,y) -> x.concat(y));
-        return boardString;
+        StopPointDetails[] nearestTwoStops = getNearbyStops(client, postcodeCoordinates);
+        return Stream.of(nearestTwoStops).map(x -> new StopDisplay(client,x));
     }
 
-    private static String displayArrivalsFor(Client client, StopPointDetails stop) {
-        Stream<Arrival> arrivalStream = getFiveArrivals(client, stop.naptanId);
-        String displayString = "\nArrivals for stop " + stop.commonName + ":\n";
-        displayString = arrivalStream.map(x -> displayOneArrival(x)).reduce(displayString,(x,y) -> x.concat(y));
-        return displayString;
-    }
+//    private static Stream<String> displayArrivalsFor(Client client, StopPointDetails stop) {
+//        Stream<Arrival> arrivalStream = getFiveArrivals(client, stop.naptanId);
+//        Stream<String> displayString = "\nArrivals for stop " + stop.commonName + ":\n";
+//        displayString = arrivalStream.map(x -> displayOneArrival(x)).reduce(displayString,(x,y) -> x.concat(y));
+//        return displayString;
+//    }
 
     private static Location getCoordinates(Client client, String postcode) {
         String targetURL = "http://api.postcodes.io/postcodes/" + postcode;
@@ -47,7 +46,7 @@ public class Main {
         return client;
     }
 
-    private static Stream<Arrival> getFiveArrivals(Client client, String naptanID) {
+    public static Stream<Arrival> getFiveArrivals(Client client, String naptanID) {
         String targetURL = "https://api.tfl.gov.uk/StopPoint/" + naptanID + "/Arrivals?app_key=c296999420f792c8d77672286948bd54&app_id=45d0999f";
         Stream<Arrival> arrivals = Stream.of(client.target(targetURL).request(MediaType.APPLICATION_JSON).get(Arrival[].class));
         return arrivals.sorted((x,y) -> x.expectedArrival.compareTo(y.expectedArrival)).limit(5);
@@ -57,6 +56,6 @@ public class Main {
         String lineName = arrival.lineName;
         String expectedArrival = arrival.expectedArrival;
         String destinationName = arrival.destinationName;
-        return "Bus number " + lineName + " to " + destinationName + " expected at " + expectedArrival + "\n";
+        return "Bus number " + lineName + " to " + destinationName + " expected at " + expectedArrival;
     }
 }

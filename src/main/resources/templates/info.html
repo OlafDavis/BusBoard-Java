@@ -13,8 +13,16 @@
         <div layout:fragment="content" class="container body-content">
             <h2>Bus Information</h2>
             <div>
-                <p>You entered postcode <span th:text="${busInfo.postcode}"></span></p>
-                <p>Arrival information: <span style="white-space: pre-line;" th:text="${busInfo.boardString}"></span> </p>
+                <p>You entered postcode <span th:text="${busInfo.getPostcode()}"></span></p>
+<!--                <p>Arrival information: <span style="white-space: pre-line;" th:text="${busInfo.boardString}"></span> </p>-->
+                <table>
+                    <tr th:each="stopDisplay: ${busInfo.getStopDisplays()}">
+                        <td th:text="${stopDisplay.getStopName()}" ></td>
+                    </tr>
+                </table>
+<!--                <p-->
+<!--                   th:text="${stopDisplay.getStopName()}" >-->
+<!--                </p>-->
             </div>
         </div>
     </body>
