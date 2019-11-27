@@ -37,6 +37,8 @@ public class StopDisplay {
 
     public String getCompassPoint() {return compassPoint; }
 
+    public String getDirection() {return Main.processDirection(compassPoint);}
+
     public String getTowards() {
         return towards;
     }

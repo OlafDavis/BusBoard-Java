@@ -57,7 +57,6 @@ public class Main {
     }
 
     public static ProcessedArrival processArrival(Arrival arrival) {
-        System.out.println(arrival.expectedArrival);
         Matcher matcher = Pattern.compile("T(.*)Z").matcher(arrival.expectedArrival);
         String formattedTime = "";
         matcher.find();
@@ -85,5 +84,20 @@ public class Main {
         return progressString;
     }
 
+    public static String processDirection(String compassPoint) {
+        String direction;
+        switch (compassPoint) {
+            case "N": direction = "Northbound"; break;
+            case "E": direction = "Eastbound"; break;
+            case "S": direction = "Southbound"; break;
+            case "W": direction = "Westbound"; break;
+            case "NE": direction = "Northeastbound"; break;
+            case "NW": direction = "Northwestbound"; break;
+            case "SE": direction = "Southeastbound"; break;
+            case "SW": direction = "Southwestbound"; break;
+            default: direction = "";
+        }
+        return direction;
+    }
 
 }

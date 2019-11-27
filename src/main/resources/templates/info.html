@@ -18,7 +18,7 @@
                     <div th:each="stopDisplay: ${busInfo.getStopDisplays()}">
                         <b><div th:text="${stopDisplay.getStopName()
                         + (stopDisplay.getTowards()!= null ? ' towards '+stopDisplay.getTowards(): '')
-                        + (stopDisplay.getCompassPoint()!= null ? ' (Direction: '+stopDisplay.getCompassPoint() + ')': '')
+                        + (stopDisplay.getCompassPoint()!= null ? ' ('+stopDisplay.getDirection() + ')': '')
                         }" ></div></b>
                         <div th:each="arrival: ${stopDisplay.getArrivals()}">
                             <div th:text="'Bus number ' + ${arrival.lineName} + ' to ' + ${arrival.destinationName} + ', expected at ' + ${arrival.formattedTime}"></div>
