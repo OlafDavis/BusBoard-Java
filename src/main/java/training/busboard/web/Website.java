@@ -22,8 +22,6 @@ public class Website {
         return new ModelAndView("info", "busInfo", new BusInfo(postcode)) ;
     }
 
-    @RequestMapping("/busBoard")
-
     public static void main(String[] args) throws Exception {
         SpringApplication.run(Website.class, args);
     }
